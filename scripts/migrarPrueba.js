@@ -1,8 +1,6 @@
 const { connectMySQL, connectMongoDB } = require('../db');
 const Curso = require('../models/CursoMongo');
 
-//Más completa que migrarPrueba
-
 async function migrarCurso500() {
   try {
     // 1. Conectamos a MongoDB y MySQL
@@ -33,34 +31,28 @@ async function migrarCurso500() {
 
     const cursoMeta = cursoMetaRows[0];
 
-    // 2.1 Verificar si ya existe en Mongo
+    /* 2.1 Verificar si ya existe en Mongo
     const existing = await Curso.findOne({ title: cursoMeta.title });
     if (existing) {
       console.log(`⚠️ El curso "${cursoMeta.title}" ya existe en MongoDB. Se omite.`);
       await connection.end();
       return;
-    }
+    }*/
 
-    // 3. Obtener secciones y slides del curso 500 con la nueva consulta
+    // 3. Obtener secciones y slides del curso 500
     const [rows] = await connection.execute(`
       SELECT 
-        c.idcontenido,
-        c.nombre AS contenido,
         sco.IdSCO,
-        sco.codigo,
-        sco.Nombre AS SCO,
-        d.nombre AS pantalla,
-        d.orden,
-        ce.id,
-        ce.contenido
+        sco.Nombre AS sectionTitle,
+        d.title AS slideTitle,
+        ce.contenido AS html
       FROM celdas ce
       INNER JOIN tablas t ON t.id = ce.id_tabla
       INNER JOIN documentos d ON d.tablas = ce.id_tabla
       INNER JOIN sco ON sco.IdSCO = d.id_sco
-      INNER JOIN contenido c ON FIND_IN_SET(sco.IdSCO, c.scos) > 0
-      INNER JOIN personalizacion p ON p.id = sco.idPersonalizacion
+      INNER JOIN contenido c ON FIND_IN_SET(sco.IdSCO, c.scos)
       WHERE c.idContenido = 500
-      ORDER BY c.idContenido, sco.IdSCO, d.orden;
+      ORDER BY sco.IdSCO, d.orden;
     `);
 
     // 4. Agrupar secciones y slides
@@ -69,7 +61,7 @@ async function migrarCurso500() {
     for (const row of rows) {
       if (!seccionesMap.has(row.IdSCO)) {
         seccionesMap.set(row.IdSCO, {
-          title: row.SCO || '',
+          title: row.sectionTitle || '',
           description: '',
           slides: [],
           subsections: [],
@@ -78,9 +70,9 @@ async function migrarCurso500() {
       }
 
       seccionesMap.get(row.IdSCO).slides.push({
-        title: row.pantalla || '',
+        title: row.slideTitle || '',
         description: '',
-        html: row.contenido || '',
+        html: row.html || '',
         css: ''
       });
     }
