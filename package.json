@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrar": "node scripts/migrarCursos.js" 
+    "migrar": "node scripts/migrarTodosLosCursos.js" 
   },
   "keywords": [],
   "author": "",
