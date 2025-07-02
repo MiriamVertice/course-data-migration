@@ -1,3 +1,5 @@
+
+require('dotenv').config();
 const { connectMySQL, connectMongoDB } = require('../db');
 const Curso = require('../models/CursoMongo');
 
