@@ -13,6 +13,8 @@ const connectMySQL = async () => {
 
 const connectMongoDB = async () => {
   await mongoose.connect(process.env.MONGO_URI);
+  console.log("✅ Conectado a:", mongoose.connection.name);
+  console.log("📍 Host:", mongoose.connection.host);
 };
 
 module.exports = { connectMySQL, connectMongoDB };

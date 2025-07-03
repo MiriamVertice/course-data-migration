@@ -16,7 +16,7 @@ async function migrarTodosLosCursos() {
     const [cursos] = await connection.execute(`
       SELECT idContenido FROM contenido
       ORDER BY idContenido
-  LIMIT 5;
+  LIMIT 50;
     `);
 
     if (cursos.length === 0) {
@@ -42,8 +42,8 @@ async function migrarTodosLosCursos() {
         LEFT JOIN ContenidosResumen cr ON cr.idcontenido = c.idContenido
         LEFT JOIN CategoriasCampusGv cat ON cat.idCategorias = c.categoriaCampusGV
         LEFT JOIN certificadosHoras ch ON ch.codigo = SUBSTRING_INDEX(c.nombre, ':', 1)
-        WHERE c.idContenido = ?
-        LIMIT 1;
+        WHERE c.idContenido = ?;
+        
       `, [idContenido]);
 
       if (cursoMetaRows.length === 0) {
