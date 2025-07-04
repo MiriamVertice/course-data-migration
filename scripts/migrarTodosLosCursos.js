@@ -2,7 +2,6 @@
 require('dotenv').config();
 const { connectMySQL, connectMongoDB } = require('../db');
 const Curso = require('../models/CursoMongo');
-
 /*script para migrar todos los cursos(con limitación a los 5 primeros, para testeo) de MySQL a MongoDB
 */
 
@@ -16,7 +15,7 @@ async function migrarTodosLosCursos() {
     const [cursos] = await connection.execute(`
       SELECT idContenido FROM contenido
       ORDER BY idContenido
-  LIMIT 50;
+      LIMIT 5;
     `);
 
     if (cursos.length === 0) {
@@ -43,7 +42,7 @@ async function migrarTodosLosCursos() {
         LEFT JOIN CategoriasCampusGv cat ON cat.idCategorias = c.categoriaCampusGV
         LEFT JOIN certificadosHoras ch ON ch.codigo = SUBSTRING_INDEX(c.nombre, ':', 1)
         WHERE c.idContenido = ?;
-        
+
       `, [idContenido]);
 
       if (cursoMetaRows.length === 0) {
@@ -109,13 +108,15 @@ async function migrarTodosLosCursos() {
       const cursoFinal = new Curso({
         title: cursoMeta.title || '',
         description: cursoMeta.description || '',
-        category: cursoMeta.category || '',
+        category: cursoMeta.category || 'uncategorized',
         duration: parsedDuration,
         level: '',
         instructor: '',
+        author: cursoMeta.author || '',
         price: 0,
         image: '',
         published: published,
+        previewImage: '',
         sections: sections
       });
 
