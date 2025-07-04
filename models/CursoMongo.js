@@ -24,9 +24,11 @@ const cursoSchema = new mongoose.Schema({
   duration: Number,
   level: String,
   instructor: String,
+  author: String,
   price: Number,
   image: String,
   published: Boolean,
+  previewImage: String,
   sections: [sectionSchema]
 }, { timestamps: true });
 
