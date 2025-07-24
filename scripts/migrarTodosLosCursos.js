@@ -2,8 +2,9 @@
 require('dotenv').config();
 const { connectMySQL, connectMongoDB } = require('../db');
 const Curso = require('../models/CursoMongo');
-/*script para migrar todos los cursos(con limitación a los 5 primeros, para testeo) de MySQL a MongoDB
-*/
+
+/*script para migrar todos los cursos de MySQL a MongoDB
+verificado que trae todo el html,css,scripts*/
 
 async function migrarTodosLosCursos() {
   try {
@@ -15,7 +16,7 @@ async function migrarTodosLosCursos() {
     const [cursos] = await connection.execute(`
       SELECT idContenido FROM contenido
       ORDER BY idContenido
-      LIMIT 5;
+      
     `);
 
     if (cursos.length === 0) {
